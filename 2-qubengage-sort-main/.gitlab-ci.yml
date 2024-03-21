@@ -1,0 +1,5 @@
+image: php:7.2
+
+test:app:
+  script:
+    - php src/test.php

@@ -1,0 +1,17 @@
+image: node:18.17.1
+
+stages:
+  - test
+
+variables:
+  NODE_ENV: test
+
+test:
+  stage: test
+  script:
+    - npm install -g jest
+    - npm install supertest --save-dev
+    - npm install axios
+    - npm install axios-mock-adapter --save-dev
+    - jest --detectOpenHandles
+  allow_failure: false

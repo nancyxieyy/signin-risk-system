@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>StudentEngagementMonitoring</title>
+<style type="text/css">
+body  {
+    font-size: 150%;
+    font-family: monospace;
+}
+label {
+    display: inline-block;
+    width: 150px;
+    text-align: left;
+}
+#logo
+{
+    font-family: Calibri, sans-serif;
+    font-weight: lighter;
+    color: #505050;
+    margin: 0.5em;
+}
+
+#sem
+{
+    text-align: center;
+    margin-top: 1em;
+}
+#input-div-1
+{
+    text-align: center;
+    margin-top: 1em;
+    background-color:#d5d8dc  ;
+}
+#input-div-2
+{
+    text-align: center;
+    background-color:#abb2b9 ;
+}
+#output-div
+{
+    text-align: center;
+    background-color:#808b96 ;
+}
+.display-item {
+    font-size: 90%;
+    color: black;
+    font-family: monospace;
+    background-color: white;
+    padding: 0.2em;
+    margin: 0.2em;
+    letter-spacing: 0.1em;
+    width: 380px;
+    text-align: right;
+}
+
+.display-attendance{
+    font-size: 90%;
+    color: black;
+    background-color: white;
+    padding: 0.2em;
+    margin: 0.2em;
+    font-family: monospace;
+    letter-spacing: 0.1em;
+    width: 40px;
+}
+
+.display-output {
+    font-size: 90%;
+    color: black;
+    background-color:white ;
+    padding: 0.2em;
+    margin: 0.2em;
+    font-family: monospace;
+    letter-spacing: 0.1em;
+    width: 600px;
+
+}
+
+.sembutton-active {
+    background-color:   #2874a6  ;
+    color: white;
+    padding: 0px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+    margin: 4px 2px;
+    cursor: pointer;
+    height: 50px;
+    width: 400px;
+}
+
+.sembutton-inactive {
+    background-color: gray;
+    color: white;
+    padding: 0px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+    margin: 4px 2px;
+    cursor: pointer;
+    height: 50px;
+    width: 400px;
+}
+
+.sembutton-clear {
+    background-color:  #c0392b ;
+    color: white;
+    padding: 0px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 18px;
+    margin: 4px 2px;
+    cursor: pointer;
+    height: 40px;
+    width: 400px;
+}
+
+</style>
+
+</head>
+<body>
+<div id="sem">
+    <div id="logo">
+        Student Engaggement Monitoring
+    </div>
+    <div id="input-div-1">
+        <div>
+            <input class="display-item" type="text" id="item_1" name="item_1" value="Lecture sessions">
+            <input class="display-attendance"  type="text" id="attendance_1" name="attendance_1" placeholder="00"><label>/33 (hours)</label>
+        </div>
+        <div>
+            <input class="display-item" type="text" id="item_2" name="item_2" value="Lab sessions">
+            <input class="display-attendance"  type="text" id="attendance_2" name="attendance_2" placeholder="00"><label>/22 (hours)</label>
+        </div>
+        <div>
+            <input class="display-item" type="text" id="item_3" name="item_3" value="Support sessions">
+            <input class="display-attendance"  type="text" id="attendance_3" name="attendance_3" placeholder="00"><label>/44 (hours)</label>
+        </div>
+        <div>
+            <input class="display-item" type="text" id="item_4" name="item_4" value="Canvas activities">
+            <input class="display-attendance"  type="text" id="attendance_4" name="attendance_4" placeholder="00"><label>/55 (hours)</label>
+        </div>
+    </div>
+
+    <div id="input-div-2">
+        <label class="display-item" id="cutoff">Cut-off Engaggement Score</label>
+        <input class="display-attendance"  type="text" id="cut-off" name="cut-off" placeholder="00"><label>/100 (%)</label>
+    </div>
+
+    <div id="output-div">
+        <textarea class="display-output" id="output-text" rows="5" cols="35" readonly=1 placeholder="Results here..." value="">
+        </textarea>
+    </div>
+
+    <div>
+        <button class="sembutton-active" onclick="getMaxMin();">Maximum and Minimum Attendance</button>
+    </div>
+
+    <div>
+        <button class="sembutton-active" onclick="getSortedAttendance();">Sort Attendance</button>
+    </div>
+
+    <div>
+        <button class="sembutton-active" onclick="getTotal();">Total Attendance Hours</button>
+    </div>
+
+    <div>
+        <button class="sembutton-active" onclick="getEngagementScore(1);">Student Engagement Score</button>
+    </div>
+
+    <div>
+        <button class="sembutton-active" onclick="getRisk();">Risk of Student Failure</button>
+    </div>
+
+    <div>
+        <button class="sembutton-active" onclick="getAverage();">Average Attendance Hours</button>
+    </div>
+
+    <div>
+        <button class="sembutton-clear" onclick="clearText();">Clear</button>
+    </div>
+</div>
+</body>
+
+<script type="text/javascript">
+
+    //let maxminURL = "http://localhost:100/";
+    //let sortedURL = "http://localhost:90/";
+    let maxminURL = "http://semmaxmin.esha.qpc.hal.davecutting.uk/";
+    let sortedURL = "http://semsort.esha.qpc.hal.davecutting.uk/";
+    let totalURL = "http://127.0.0.1:5000";
+    let engagementURL = "http://127.0.0.1:3001";
+    let riskURL = "http://127.0.0.1:3003";
+    let averageURL = "https://europe-west2-keen-ripsaw-406523.cloudfunctions.net/get_average_http";
+    // let averageURL = "http://127.0.0.1:3006"
+    
+    var tmp = 0;
+    function dataProcessing(attendance_1, attendance_2, attendance_3, attendance_4, tmp) {
+        if(attendance_1 != '' && attendance_2 != '' && attendance_3 != '' && attendance_4 != '') {
+            tmp = outOfBounds(attendance_1, attendance_2,attendance_3, attendance_4, tmp);
+            return tmp;
+        } else {
+            displayEmpty();
+            tmp = 0;
+            return tmp;
+        }
+    }
+
+    function outOfBounds(attendance_1, attendance_2, attendance_3, attendance_4, tmp) {
+        if(attendance_1 < 0 || attendance_1 > 33 || attendance_2 < 0 || attendance_1 > 22 || attendance_3 < 0 || attendance_3 > 44 || attendance_4 < 0 || attendance_4 > 55) {
+            diaplayBounds();
+            tmp = 1;
+            return tmp;
+        }else{
+            tmp = 2;
+            return tmp;
+        }
+    }
+    
+    function displayEmpty() {
+        document.getElementById('output-text').value = 'Please enter your all datas first!';
+    }
+
+    function diaplayBounds() {
+        document.getElementById('output-text').value = 'Please fill in the correct range of the item!';
+    }
+
+    function displayMaxMin(max_attendance, min_attendance) {
+        document.getElementById('output-text').value = 'Maximum attendance = ' + max_attendance + ' hours' + '\nMinimum attendance = ' + min_attendance + ' hours';
+    }
+
+    function displaySortedAttendance(sorted_attendance) {
+        document.getElementById('output-text').value = sorted_attendance;
+    }
+
+    function displayTotal(total_attendance) {
+        document.getElementById('output-text').value = 'Total Attendance (in hours) = ' + total_attendance + ' hours';
+    }
+
+    function displayEngagementScore(score) {
+        document.getElementById('output-text').value = 'Student Engagement Score: ' + score;
+    }
+
+    function displayRisk(risk, engagementScore) {
+        if (risk == false) {
+            document.getElementById('output-text').value = 'Your engagementScore is ' + engagementScore + ', and there is no risk of students failing';
+        }
+        if (risk == true) {
+            document.getElementById('output-text').value = 'Your engagementScore is ' + engagementScore + ', and there is risk of students failing';
+        }
+    }
+
+    function displayAverage(averageAttendance) {
+        document.getElementById('output-text').value = 'Average Attendance (in hours) = ' + averageAttendance + ' hours';
+    }
+
+    function clearText() {
+        document.getElementById('attendance_1').value = '';
+        document.getElementById('attendance_2').value = '';
+        document.getElementById('attendance_3').value = '';
+        document.getElementById('attendance_4').value = '';
+        document.getElementById('output-text').value = '';
+    }
+
+    function getMaxMin() {
+        let item_1 = document.getElementById('item_1').value;
+        let item_2 = document.getElementById('item_2').value;
+        let item_3 = document.getElementById('item_3').value;
+        let item_4 = document.getElementById('item_4').value;
+
+        let attendance_1 = document.getElementById('attendance_1').value;
+        let attendance_2 = document.getElementById('attendance_2').value;
+        let attendance_3 = document.getElementById('attendance_3').value;
+        let attendance_4 = document.getElementById('attendance_4').value;
+        
+        tmp = dataProcessing(attendance_1, attendance_2, attendance_3, attendance_4, tmp);
+        
+        if(tmp == 2){
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    //let response = this.response
+                    var j = JSON.parse(this.response);
+                    console.log('test -- ' + j.max_item);
+                    let max_attendance = j.max_item;
+                    let min_attendance = j.min_item;
+                    displayMaxMin(max_attendance,min_attendance);
+                }
+            };
+            xhttp.open("GET",maxminURL+"?item_1=" + item_1 + "&attendance_1=" + attendance_1 + "&item_2=" + item_2 + "&attendance_2=" + attendance_2
+    + "&item_3=" + item_3 + "&attendance_3=" + attendance_3 + "&item_4=" + item_4 + "&attendance_4=" + attendance_4);
+             xhttp.send();
+        }
+    }
+
+    function getSortedAttendance() {
+        let item_1 = document.getElementById('item_1').value
+        let item_2 = document.getElementById('item_2').value
+        let item_3 = document.getElementById('item_3').value
+        let item_4 = document.getElementById('item_4').value
+
+        let attendance_1 = document.getElementById('attendance_1').value
+        let attendance_2 = document.getElementById('attendance_2').value
+        let attendance_3 = document.getElementById('attendance_3').value
+        let attendance_4 = document.getElementById('attendance_4').value
+
+        tmp = dataProcessing(attendance_1, attendance_2, attendance_3, attendance_4, tmp);
+        
+        if(tmp == 2) {
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var j = JSON.parse(this.response);
+                    let sorted_attendance_returned = j.sorted_attendance;
+                    let sorted_attendance = '';
+                    for (let i = 0; i < sorted_attendance_returned.length; i++) {
+                        sorted_attendance += sorted_attendance_returned[i]['item'] + ' - ' + sorted_attendance_returned[i]['attendance'] + ' hours' + '\r\n';
+                    }
+                    displaySortedAttendance(sorted_attendance);
+                }
+            };
+            xhttp.open("GET",sortedURL+"?item_1=" + item_1 + "&attendance_1=" + attendance_1 + "&item_2=" + item_2 + "&attendance_2=" + attendance_2
+    + "&item_3=" + item_3 + "&attendance_3=" + attendance_3 + "&item_4=" + item_4 + "&attendance_4=" + attendance_4);
+            xhttp.send();
+            return;
+        }
+    }
+
+    function getTotal() {
+        let item_1 = document.getElementById('item_1').value
+        let item_2 = document.getElementById('item_2').value
+        let item_3 = document.getElementById('item_3').value
+        let item_4 = document.getElementById('item_4').value
+
+        let attendance_1 = document.getElementById('attendance_1').value
+        let attendance_2 = document.getElementById('attendance_2').value
+        let attendance_3 = document.getElementById('attendance_3').value
+        let attendance_4 = document.getElementById('attendance_4').value
+
+        tmp = dataProcessing(attendance_1, attendance_2, attendance_3, attendance_4, tmp);
+        
+        if(tmp == 2) {
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var j = JSON.parse(this.response);
+                    let totalAttendance = j.total;
+                    displayTotal(totalAttendance);
+                }
+            };
+            xhttp.open("GET",totalURL+"?item_1=" + item_1 + "&attendance_1=" + attendance_1 + "&item_2=" + item_2 + "&attendance_2=" + attendance_2
+    + "&item_3=" + item_3 + "&attendance_3=" + attendance_3 + "&item_4=" + item_4 + "&attendance_4=" + attendance_4);
+            xhttp.send();
+            return;
+        }
+    }
+
+    let score = 0;
+    function getEngagementScore(flag) {
+        let item_1 = document.getElementById('item_1').value
+        let item_2 = document.getElementById('item_2').value
+        let item_3 = document.getElementById('item_3').value
+        let item_4 = document.getElementById('item_4').value
+
+        let attendance_1 = document.getElementById('attendance_1').value
+        let attendance_2 = document.getElementById('attendance_2').value
+        let attendance_3 = document.getElementById('attendance_3').value
+        let attendance_4 = document.getElementById('attendance_4').value
+
+        tmp = dataProcessing(attendance_1, attendance_2, attendance_3, attendance_4, tmp);
+        
+        if(tmp == 2) {
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var j = JSON.parse(this.response);
+                    if (flag == 1) {
+                        displayEngagementScore(j.engagementScore);
+                    } else {
+                        score = j.engagementScore;
+                    }
+                }
+            };
+            xhttp.open("GET",engagementURL+"?item_1=" + item_1 + "&attendance_1=" + attendance_1 + "&item_2=" + item_2 + "&attendance_2=" + attendance_2
+    + "&item_3=" + item_3 + "&attendance_3=" + attendance_3 + "&item_4=" + item_4 + "&attendance_4=" + attendance_4);
+            xhttp.send();
+            return;
+        }
+    }
+
+    function getRisk() {
+        getEngagementScore(0);
+        let item_1 = document.getElementById('item_1').value
+        let item_2 = document.getElementById('item_2').value
+        let item_3 = document.getElementById('item_3').value
+        let item_4 = document.getElementById('item_4').value
+        let item_5 = document.getElementById('cutoff').value
+
+        let attendance_1 = document.getElementById('attendance_1').value
+        let attendance_2 = document.getElementById('attendance_2').value
+        let attendance_3 = document.getElementById('attendance_3').value
+        let attendance_4 = document.getElementById('attendance_4').value
+        let attendance_5 = document.getElementById('cut-off').value
+
+        let engagementScore = score;
+
+        tmp = dataProcessing(attendance_1, attendance_2, attendance_3, attendance_4, tmp);
+
+        if(attendance_5 < 0 || attendance_5 > 100) {
+            tmp = 0;
+        }
+        
+        if(tmp == 2) {
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4 && this.status == 200) {
+                    var j = JSON.parse(this.response);
+                    displayRisk(j.risk, j.engagementScore);
+                }
+            };
+            xhttp.open("GET",riskURL+"?item_1=" + item_1 + "&attendance_1=" + attendance_1 + "&item_2=" + item_2 + "&attendance_2=" + attendance_2
+    + "&item_3=" + item_3 + "&attendance_3=" + attendance_3 + "&item_4=" + item_4 + "&attendance_4=" + attendance_4 + "&attendance_5=" + attendance_5 + "&engagementScore=" + engagementScore);
+            xhttp.send();
+            return;
+        }
+    }
+
+    function getAverage() {
+        let item_1 = encodeURIComponent(document.getElementById('item_1').value);
+        let item_2 = encodeURIComponent(document.getElementById('item_2').value);
+        let item_3 = encodeURIComponent(document.getElementById('item_3').value);
+        let item_4 = encodeURIComponent(document.getElementById('item_4').value);
+
+        let attendance_1 = encodeURIComponent(document.getElementById('attendance_1').value);
+        let attendance_2 = encodeURIComponent(document.getElementById('attendance_2').value);
+        let attendance_3 = encodeURIComponent(document.getElementById('attendance_3').value);
+        let attendance_4 = encodeURIComponent(document.getElementById('attendance_4').value);
+
+        tmp = dataProcessing(attendance_1, attendance_2, attendance_3, attendance_4, tmp);
+        
+        if(tmp == 2) {
+            let xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function() {
+                if (this.readyState == 4) {
+                    if (this.status == 200) {
+                        var j = JSON.parse(this.response);
+                        let averageAttendance = j.average;
+                        displayAverage(averageAttendance);
+                    } else {
+                        console.error('Error:', this.statusText);
+                    }
+                }
+            };
+
+            let queryParams = `?item_1=${item_1}&attendance_1=${attendance_1}&item_2=${item_2}&attendance_2=${attendance_2}&item_3=${item_3}&attendance_3=${attendance_3}&item_4=${item_4}&attendance_4=${attendance_4}`;
+            xhttp.open("GET", averageURL + queryParams);
+            xhttp.send();
+            return;
+        }
+    }
+
+</script>
+
+</html>

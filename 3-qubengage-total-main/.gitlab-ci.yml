@@ -1,0 +1,10 @@
+image: python:3.8
+
+stages:
+  - test
+
+test_app:
+  stage: test
+  script:
+    - pip install -r requirements.txt  # 安装 Flask 和其他依赖
+    - python -m unittest src/test.py
