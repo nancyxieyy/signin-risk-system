@@ -7,7 +7,7 @@
 
 - 多语言模块开发：Node.js / Java / Python
 - 风险评分算法整合与 Web 展示
-- 持续集成（CI）测试：GitHub Actions
+- 持续集成（CI）测试：GitLab
 - Docker 容器化部署 & Google Cloud 云上线
 
 ## 🔧 Tech Stack
